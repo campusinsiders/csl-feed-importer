@@ -91,7 +91,8 @@ class CSL_Feed_Item_Importer {
 			->handle_body()
 			->handle_author()
 			->handle_date()
-			->handle_guid();
+			->handle_guid()
+			->handle_post_status();
 
 		if ( $this->post_should_insert() ) {
 			$this->insert_as_post();
@@ -194,6 +195,25 @@ class CSL_Feed_Item_Importer {
 	}
 
 	/**
+	 * Handle Post Status
+	 *
+	 * Reads the User defined Post Status from the options page and sets this as the
+	 * post_status.  If undefined in the options, defaults to publish.
+	 *
+	 * @return CSL_Feed_Item_Importer Instance of self
+	 */
+	public function handle_post_status() {
+		$this->post['post_status'] = 'publish';
+		$options = \get_option( 'csl_feed_import_options' );
+
+		if ( false !== $options && isset( $options['post_status'] ) ) {
+			$this->post['post_status'] = $options['post_status'];
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Post Should Insert
 	 *
 	 * Decides whether the post should be inserted based on whether it already exists, has content,
@@ -264,7 +284,6 @@ class CSL_Feed_Item_Importer {
 	 */
 	protected function get_tags() {
 		$default_tags = array(
-			'Collegiate Starleague',
 			'eSports',
 			);
 
