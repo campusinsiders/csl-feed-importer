@@ -27,9 +27,9 @@ function csl_feed_options() {
 			) ),
 			'post_status' => new \Fieldmanager_Select( 'Default Post Status of Imported Posts', array(
 				'options' => array(
-					'Published' => 'publish',
-					'Draft' => 'draft',
-					'Pending Review' => 'pending',
+					'publish' => 'Published',
+					'draft' => 'Draft',
+					'pending' => 'Pending Review',
 				),
 			) ),
 			'default_media' => new \Fieldmanager_Media( 'Default Featured Image', array(
