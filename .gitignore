@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+wp-cli.local.yml
+.git/
+node_modules/
+bin/
+tests/
+.travis.yml
+phpunit.xml.dist
+readme.txt
+.distignore
