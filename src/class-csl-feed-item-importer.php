@@ -141,8 +141,9 @@ class CSL_Feed_Item_Importer {
 	 * @return  CSL_Feed_Item_Importer Instance of self
 	 */
 	public function handle_body() {
-		$this->post['post_content'] = htmlspecialchars_decode( $this->item->body, ENT_COMPAT | ENT_HTML5 );
-
+		$content = htmlspecialchars_decode( $this->item->body, ENT_COMPAT | ENT_HTML5 );
+		$content = wp_kses_post( $content );
+		$this->post['post_content'] = $content;
 		return $this;
 	}
 
