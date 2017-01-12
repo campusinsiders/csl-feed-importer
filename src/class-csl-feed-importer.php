@@ -24,6 +24,13 @@ class CSL_Feed_Importer {
 	const FEED = 'https://cstarleague.com/feed.rss';
 
 	/**
+	 * Post Ids of Imported Posts
+	 *
+	 * @var int[]
+	 */
+	protected $post_ids;
+
+	/**
 	 * Raw Feed
 	 *
 	 * @var string The raw contents of the feed.
@@ -45,6 +52,7 @@ class CSL_Feed_Importer {
 	 * @return  CSL_Feed_Importer Instance of self.
 	 */
 	public function __construct() {
+		$this->post_ids = array();
 		$this->raw_feed = $this->get_feed_contents();
 		$this->parsed_feed = $this->parse_feed( $this->raw_feed );
 
@@ -90,6 +98,10 @@ class CSL_Feed_Importer {
 			foreach ( $this->parsed_feed->channel->item as $item ) {
 				$item_importer = new CSL_Feed_Item_Importer( $item );
 				$item_importer->import();
+
+				if ( ! is_wp_error( $item_importer->post_id ) ) {
+					array_push( $this->post_ids, $item_importer->post_id );
+				}
 			}
 		}
 
