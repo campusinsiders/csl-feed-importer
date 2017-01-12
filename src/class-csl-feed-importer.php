@@ -1,8 +1,8 @@
 <?php
 /**
- * CStar League  Importer
+ * CSL Feed Importer
  *
- * Imports a single article from the CSL RSS Feed as a WordPress Post inside a provided taxonomy.
+ * Imports the CSL RSS Feed as WordPress Posts.
  *
  * @package  CSL_Feed_Importer
  */
@@ -12,7 +12,7 @@ namespace Lift\Campus_Insiders\CSL_Feed_Importer;
 /**
  * Class: CSL_Feed_Importer
  *
- * Class containing the methods to import an RSS channel item from CSL as a WordPress post.
+ * Class containing the methods to import an RSS feed from CSL as WordPress posts.
  *
  * @since  v0.1.0
  */

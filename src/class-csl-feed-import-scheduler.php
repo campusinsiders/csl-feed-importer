@@ -1,8 +1,8 @@
 <?php
 /**
- * CStar League Scheduler
+ * CSL Feed Import Scheduler
  *
- * Imports the CSL RSS Feed as a bunch of WordPress Posts inside a provided taxonomy.
+ * Manages the cron events used to schedule imports.
  *
  * @package  CSL_Feed_Importer
  */
@@ -12,7 +12,7 @@ namespace Lift\Campus_Insiders\CSL_Feed_Importer;
 /**
  * Class: CSL_Feed_Import_Scheduler
  *
- * Class containing the methods to import an RSS channel item from CSL as a WordPress post.
+ * Class containing the methods to spawn, despawn, and reschedule feed imports.
  *
  * @since  v0.1.0
  */

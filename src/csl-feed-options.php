@@ -1,6 +1,6 @@
 <?php
 /**
- * CStar Feed Options
+ * CSL Feed Options
  *
  * Creates an options page where users can set the interval of imports and the authors to
  * import the posts as.

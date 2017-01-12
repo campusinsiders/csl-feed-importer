@@ -1,6 +1,6 @@
 <?php
 /**
- * CStar League Single Item Importer
+ * CSL Single Item Importer
  *
  * Imports a single article from the CSL RSS Feed as a WordPress Post inside a provided taxonomy.
  *
