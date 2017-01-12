@@ -208,7 +208,7 @@ class CSL_Feed_Item_Importer {
 		$options = \get_option( 'csl_feed_import_options' );
 
 		if ( false !== $options && isset( $options['post_status'] ) ) {
-			if( in_array( $options['post_status'], get_post_statuses(), true ) ) {
+			if ( in_array( $options['post_status'], get_post_statuses(), true ) ) {
 				$this->post['post_status'] = $options['post_status'];
 			}
 		}
