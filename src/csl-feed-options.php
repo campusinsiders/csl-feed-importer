@@ -32,6 +32,12 @@ function csl_feed_options() {
 					'Pending Review' => 'pending',
 				),
 			) ),
+			'default_media' => new \Fieldmanager_Media( 'Default Featured Image', array(
+				'button_label' => 'Add Featured Image',
+				'modal_title' => 'Select Featured Image',
+				'modal_button_label' => 'Use Image as Featured Image',
+				'preview_size' => 'icon',
+			) ),
 		),
 	) );
 	$fields->activate_submenu_page();
