@@ -26,11 +26,6 @@ if ( is_admin() ) {
 	require_once( plugin_dir_path( __FILE__ ) . 'src/csl-feed-options.php' );
 }
 
-define( 'CSTAR_FEED_URL', 'https://cslleague.com/feed.rss' );
-
-register_activation_hook( __FILE__, __NAMESPACE__ . '\\activate' );
-register_deactivation_hook( __FILE__, __NAMESPACE__ . '\\deactivate' );
-
 /**
  * Activate
  *
@@ -42,6 +37,7 @@ function activate() {
 	$scheduler = new CSL_Feed_Import_Scheduler;
 	$scheduler->schedule_next();
 }
+register_activation_hook( __FILE__, __NAMESPACE__ . '\\activate' );
 
 /**
  * Deactivate
@@ -54,6 +50,7 @@ function deactivate() {
 	$scheduler = new CSL_Feed_Import_Scheduler;
 	$scheduler->clear();
 }
+register_deactivation_hook( __FILE__, __NAMESPACE__ . '\\deactivate' );
 
 /**
  * Run
