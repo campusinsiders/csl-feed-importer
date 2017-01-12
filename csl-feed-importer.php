@@ -35,7 +35,14 @@ if ( is_admin() ) {
  */
 function activate() {
 	$scheduler = new CSL_Feed_Import_Scheduler;
-	$scheduler->schedule_next( ( 20 * MINUTE_IN_SECONDS ) );
+	// The first run will start run in 20 minutes.
+	$first_run = time() + ( 20 * MINUTE_IN_SECONDS );
+
+	// Clear Scheduler of any previous cron events to be sure.
+	$scheduler->clear();
+
+	// Schedule the first run.
+	$scheduler->setup()->schedule_next( $first_run );
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\\activate' );
 
