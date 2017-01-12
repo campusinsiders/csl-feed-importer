@@ -35,7 +35,7 @@ if ( is_admin() ) {
  */
 function activate() {
 	$scheduler = new CSL_Feed_Import_Scheduler;
-	$scheduler->schedule_next();
+	$scheduler->schedule_next( ( 20 * MINUTE_IN_SECONDS ) );
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\\activate' );
 
