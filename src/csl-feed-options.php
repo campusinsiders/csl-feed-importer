@@ -25,6 +25,13 @@ function csl_feed_options() {
 			'author' => new \Fieldmanager_Select( 'Default Author of Imported Posts', array(
 				'datasource' => new \Fieldmanager_Datasource_User,
 			) ),
+			'post_status' => new \Fieldmanager_Select( 'Default Post Status of Imported Posts', array(
+				'options' => array(
+					'Published' => 'publish',
+					'Draft' => 'draft',
+					'Pending Review' => 'pending',
+				),
+			) ),
 		),
 	) );
 	$fields->activate_submenu_page();
