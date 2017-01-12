@@ -38,14 +38,14 @@ class CSL_Feed_Item_Importer {
 	 *
 	 * @var integer|\WP_Error The Post ID if successful, 0 or WP_Error on failure
 	 */
-	protected $post_id = 0;
+	public $post_id = 0;
 
 	/**
 	 * Inserted
 	 *
 	 * @var boolean  False until the item is successfully inserted as a post
 	 */
-	protected $inserted = false;
+	public $inserted = false;
 
 	/**
 	 * Constructor
@@ -98,7 +98,8 @@ class CSL_Feed_Item_Importer {
 			$this->insert_as_post();
 
 			if ( $this->post_id ) {
-				$this->map_terms( \get_post( $this->post_id ) );
+				$this->map_terms();
+				$this->map_featured_image();
 			}
 		}
 
@@ -207,7 +208,9 @@ class CSL_Feed_Item_Importer {
 		$options = \get_option( 'csl_feed_import_options' );
 
 		if ( false !== $options && isset( $options['post_status'] ) ) {
-			$this->post['post_status'] = $options['post_status'];
+			if( in_array( $options['post_status'], get_post_statuses(), true ) ) {
+				$this->post['post_status'] = $options['post_status'];
+			}
 		}
 
 		return $this;
@@ -295,5 +298,25 @@ class CSL_Feed_Item_Importer {
 		 * @param  \SimpleXMLElement $item     The Feed Item that was imported.
 		 */
 		return apply_filters( 'csl_feed_post_tags', $default_tags, $this->post_id, $this->item );
+	}
+
+	/**
+	 * Map Featured Media
+	 *
+	 * Reads the default media from the options page and if defined there, sets it as the imported
+	 * post thumbnail.
+	 *
+	 * @todo   When/If CSL sends featured media in their feed, this needs to check if it was set as
+	 *         in handler function, so we don't override what CSL provides.
+	 * @return CSL_Feed_Item_Importer Instance of self
+	 */
+	protected function map_featured_image() {
+		$options = \get_option( 'csl_feed_import_options' );
+
+		if ( false !== $options && isset( $options['default_media'] ) ) {
+			set_post_thumbnail( absint( $this->post_id ), absint( $options['default_media'] ) );
+		}
+
+		return $this;
 	}
 }
