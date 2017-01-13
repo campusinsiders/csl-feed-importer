@@ -21,6 +21,9 @@ require_once( plugin_dir_path( __FILE__ ) . 'src/class-csl-feed-item-importer.ph
 // Require the scheduler.
 require_once( plugin_dir_path( __FILE__ ) . 'src/class-csl-feed-import-scheduler.php' );
 
+// Require misc functions.
+require_once( plugin_dir_path( __FILE__ ) . 'src/csl-feed-functions.php' );
+
 // Require the options page if we're in the admin.
 if ( is_admin() ) {
 	require_once( plugin_dir_path( __FILE__ ) . 'src/csl-feed-options.php' );
