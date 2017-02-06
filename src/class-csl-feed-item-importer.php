@@ -41,6 +41,13 @@ class CSL_Feed_Item_Importer {
 	public $post_id = 0;
 
 	/**
+	 * Featured Image ID
+	 *
+	 * @var integer The featured image attachment ID, or 0 if not set.
+	 */
+	public $featured_image = 0;
+
+	/**
 	 * Inserted
 	 *
 	 * @var boolean  False until the item is successfully inserted as a post
@@ -75,6 +82,12 @@ class CSL_Feed_Item_Importer {
 		if ( ! function_exists( 'posts_exists' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/post.php' );
 		}
+
+		if ( ! function_exists( 'media_handle_upload' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/image.php' );
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			require_once( ABSPATH . 'wp-admin/includes/media.php' );
+		}
 	}
 
 	/**
@@ -98,8 +111,16 @@ class CSL_Feed_Item_Importer {
 			$this->insert_as_post();
 
 			if ( $this->post_id ) {
+				// Map the terms.
 				$this->map_terms();
-				$this->map_featured_image();
+
+				// Map the featured image.
+				$image_mapped = $this->map_featured_image();
+
+				// Map default featured image, if mapping provided image failed.
+				if ( false === $image_mapped || is_wp_error( $image_mapped ) ) {
+					$this->map_default_featured_image();
+				}
 			}
 		}
 
@@ -304,18 +325,71 @@ class CSL_Feed_Item_Importer {
 	/**
 	 * Map Featured Media
 	 *
-	 * Reads the default media from the options page and if defined there, sets it as the imported
-	 * post thumbnail.
+	 * If the item provides a <featured_image> this method will download the image, and set it
+	 * as the post thumbnail.
 	 *
-	 * @todo   When/If CSL sends featured media in their feed, this needs to check if it was set as
-	 *         in handler function, so we don't override what CSL provides.
-	 * @return CSL_Feed_Item_Importer Instance of self
+	 * @internal  Warning: Using `@` operator and `unlink()`.  As far as I know, we have to do
+	 *            it this way. -CC
+	 * @return bool|\WP_Error True on success, false or WP_Error if failure.
 	 */
 	protected function map_featured_image() {
+		$image_url = $this->item->featured_image;
+
+		// Bail if we don't have a post to attach to, or if the url provided isn't valid.
+		if ( ! $this->post_id || ! filter_var( (string) $image_url, FILTER_VALIDATE_URL ) ) {
+			return false;
+		}
+
+		// Download the image.
+		$tmp = download_url( $image_url, 30 );
+
+		// Return error object if there was an error.
+		if ( is_wp_error( $tmp ) ) {
+			return $tmp;
+		}
+
+		// Use the title as a description.
+		$desc = \get_the_title( $this->post_id );
+		$file_array = array();
+
+		// Name the file.
+		preg_match( '/[^\?]+\.(jpg|jpe|jpeg|gif|png)/i', $image_url, $matches );
+		$file_array['name'] = basename( $matches[0] );
+		$file_array['tmp_name'] = $tmp;
+
+		// Sideload the image.
+		$thumb_id = media_handle_sideload( $file_array, $this->post_id, $desc );
+
+		// If error storing permanently, delete the temp and return the error.
+		if ( is_wp_error( $thumb_id ) ) {
+			@unlink( $file_array['tmp_name'] );
+			return $thumb_id;
+		}
+
+		// Store the feautured image ID and return the result of setting it on the post.
+		$this->featured_image = absint( $thumb_id );
+		return set_post_thumbnail( $this->post_id, $this->featured_image );
+	}
+
+	/**
+	 * Map Default Featured Media
+	 *
+	 * Reads the default media from the options page and if defined there, sets it as the imported
+	 * post thumbnail.  Should not run if featured image was set to provided image.
+	 *
+	 * @return CSL_Feed_Item_Importer Instance of self
+	 */
+	protected function map_default_featured_image() {
+		// Bail early if the featured image is already set.
+		if ( $this->featured_image ) {
+			return $this;
+		}
+
 		$options = \get_option( 'csl_feed_import_options' );
 
 		if ( false !== $options && isset( $options['default_media'] ) ) {
-			set_post_thumbnail( absint( $this->post_id ), absint( $options['default_media'] ) );
+			$this->featured_image = absint( $options['default_media'] );
+			set_post_thumbnail( absint( $this->post_id ), $this->featured_image );
 		}
 
 		return $this;
