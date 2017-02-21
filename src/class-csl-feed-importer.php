@@ -105,7 +105,7 @@ class CSL_Feed_Importer {
 			}
 		}
 
-		return $this;
+		return $this->handle_success();
 	}
 
 	/**
@@ -125,5 +125,18 @@ class CSL_Feed_Importer {
 
 		// Schedule another run.
 		$scheduler->schedule_next( time() + ( 20 * MINUTE_IN_SECONDS ) );
+	}
+
+	/**
+	 * Handle Success
+	 *
+	 * Upon successful import, we update an option that records the last time the import
+	 * was run successfully.
+	 *
+	 * @return CSL_Feed_Importer Instance of self.
+	 */
+	public function handle_success() {
+		update_option( 'csl_feed_last_run', time() );
+		return $this;
 	}
 }
