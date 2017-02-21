@@ -18,10 +18,17 @@ namespace Lift\Campus_Insiders\CSL_Feed_Importer;
  * @return void
  */
 function csl_feed_options() {
+	$next_run_time = wp_next_scheduled( 'csl_feed_import' );
+	if  ( ! $next_run_time ) {
+		$next_message = '(never)';
+	} else {
+		$next_message = human_time_diff( time(), $next_run_time );
+	}
+
 	$fields = new \Fieldmanager_Group( array(
 		'name' => 'csl_feed_import_options',
 		'children' => array(
-			'interval' => new \Fieldmanager_TextField( 'Interval to Run Importer ( Hours )' ),
+			'interval' => new \Fieldmanager_TextField( 'Interval ( Hours ) | Next Run: ' . $next_message ),
 			'author' => new \Fieldmanager_Select( 'Default Author of Imported Posts', array(
 				'datasource' => new \Fieldmanager_Datasource_User,
 			) ),
