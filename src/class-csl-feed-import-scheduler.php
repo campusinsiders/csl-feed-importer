@@ -61,7 +61,8 @@ class CSL_Feed_Import_Scheduler {
 	 * Setup
 	 *
 	 * Attaches the necessary options to run the cron events and includes our interval.
-	 * in the list of recurrence schedules.
+	 * in the list of recurrence schedules. On admin, checks to see if a cron task is scheduled,
+	 * and if it doesn't find one, schedules it.
 	 *
 	 * @return CSL_Feed_Import_Scheduler Instance of self.
 	 */
@@ -69,6 +70,7 @@ class CSL_Feed_Import_Scheduler {
 		add_action( $this->hook, array( $this, 'import' ) );
 		add_filter( 'cron_schedules', array( $this, 'add_recurrence' ), 10, 1 );
 		add_action( 'update_option', array( $this, 'reset_schedule' ), 10, 3 );
+		add_action( 'admin_footer', array( $this, 'schedule_next' ), 10, 3 );
 		return $this;
 	}
 
