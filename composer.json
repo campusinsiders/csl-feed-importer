@@ -1,0 +1,8 @@
+{
+"name": "liftux/csl-feed-importer",
+"description": "Imports Articles as WordPress Posts from CSL on a user defined interval.",
+"type": "wordpress-plugin",
+"require": {
+"composer/installers": "~1.0"
+}
+}
